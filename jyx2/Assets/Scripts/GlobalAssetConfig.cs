@@ -14,22 +14,19 @@ public class GlobalAssetConfig : ScriptableObject
 {
     public static GlobalAssetConfig Instance { get; set; }= null;
 
-    
-    
     [BoxGroup("游戏MOD")] [LabelText("初始MOD ID")]
     public string startModId;
+    
+    [BoxGroup("游戏MOD")] [LabelText("本地MOD查找路径")]
+    public List<string> localModPath;
 
     [BoxGroup("基础配置")] [LabelText("Lua引导文件")]
     [InfoBox("这里定义所有的lua到C#的公共绑定和一些公用函数")]
     public TextAsset rootLuaFile;
     
-    //--------------------------------------------------------------------------------------------
-    //以下均为新增的语言配置文件
-    //--------------------------------------------------------------------------------------------
+    // TODO:需要完善
     [BoxGroup("语言相关")] [LabelText("语言文件")]
     public Translator defaultTranslator;
-    //--------------------------------------------------------------------------------------------
-    //--------------------------------------------------------------------------------------------
     
     [BoxGroup("游戏动作")] [LabelText("默认受击动作")]
     public AnimationClip defaultBeHitClip;

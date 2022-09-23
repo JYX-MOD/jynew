@@ -42,7 +42,6 @@ MonoBehaviour:
     - Animancer
     - LeanPool
     - UniTask.DOTween
-    - Purchasing.Common
     - Sirenix.OdinInspector.CompatibilityLayer
     - Animancer.FSM
     - XNode
@@ -53,7 +52,6 @@ MonoBehaviour:
     - Sirenix.OdinInspector.CompatibilityLayer.Editor
     - UniTask.Editor
     - com.rlabrecque.steamworks.net.editor
-    - Analytics
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1

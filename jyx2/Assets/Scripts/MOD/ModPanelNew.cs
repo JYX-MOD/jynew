@@ -1,91 +1,90 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Jyx2;
 using Sirenix.Utilities;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ModPanelNew : Jyx2_UIBase
+namespace MOD
 {
-    public Dropdown m_Dropdown;
-    public GameObject ModChangedSuggestLabel;
-
-    public void Start()
+    public class ModPanelNew : Jyx2_UIBase
     {
-        m_Dropdown.onValueChanged.RemoveAllListeners();
-        m_Dropdown.onValueChanged.AddListener(OnValueChanged);
-        m_Dropdown.ClearOptions();
-        m_Dropdown.AddOptions(LoadModList());
-        m_Dropdown.value = m_Dropdown.options.FindIndex(o => o.text == RuntimeEnvSetup.CurrentModId);
-        
-        ModChangedSuggestLabel.gameObject.SetActive(false);
-    }
+        public Dropdown m_Dropdown;
+        public GameObject ModChangedSuggestLabel;
 
-
-    public List<string> LoadModList()
-    {
-        if (Application.isEditor || !Application.isMobilePlatform)
+        public void Start()
         {
-            if (File.Exists("modlist.txt"))
-            {
-                List<string> rst = new List<string>();
-                var lines = File.ReadAllLines("modlist.txt");
-                foreach (var line in lines)
-                {
-                    if (line.IsNullOrWhitespace()) continue;
-                    rst.Add(line);
-                }
-                return rst;
-            }
+            m_Dropdown.onValueChanged.RemoveAllListeners();
+            m_Dropdown.onValueChanged.AddListener(OnValueChanged);
+            m_Dropdown.ClearOptions();
+            m_Dropdown.AddOptions(LoadLocalModList());
+            m_Dropdown.value = m_Dropdown.options.FindIndex(o => o.text == RuntimeEnvSetup.CurrentModId);
+        
+            ModChangedSuggestLabel.gameObject.SetActive(false);
         }
-        
-        //暂不支持自由扩展MOD
-        return new List<string> {"JYX2", "SAMPLE"};
-    }
 
-    public void OnClose()
-    {
-        var selectMod = m_Dropdown.options[m_Dropdown.value].text;
-        if(selectMod != RuntimeEnvSetup.CurrentModId)
+
+        /// <summary>
+        /// 获取本地MOD列表
+        /// </summary>
+        /// <returns></returns>
+        public List<string> LoadLocalModList()
         {
-            PlayerPrefs.SetString("CURRENT_MOD", selectMod);
-            PlayerPrefs.Save();
+            List<string> modsList = new();
+            foreach (var path in GlobalAssetConfig.Instance.localModPath)
+            {
+                var direction = new DirectoryInfo(path);
+                var folders = direction.GetDirectories("*", SearchOption.TopDirectoryOnly);
+                modsList.AddRange(folders.Select(t => t.Name));
+            }
+
+            return modsList;
+        }
+
+        public void OnClose()
+        {
+            var selectMod = m_Dropdown.options[m_Dropdown.value].text;
+            if(selectMod != RuntimeEnvSetup.CurrentModId)
+            {
+                PlayerPrefs.SetString("CURRENT_MOD", selectMod);
+                PlayerPrefs.Save();
 #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
+                UnityEditor.EditorApplication.isPlaying = false;
 #else
             Application.Quit();
 #endif
+            }
+            this.Hide();
         }
-        this.Hide();
-    }
 
-    protected override void OnCreate()
-    {
+        protected override void OnCreate()
+        {
         
-    }
+        }
 
-    void OnValueChanged(int index)
-    {
-        string selectMod = m_Dropdown.options[m_Dropdown.value].text;
-        ModChangedSuggestLabel.gameObject.SetActive(selectMod != RuntimeEnvSetup.CurrentModId);
-    }
+        void OnValueChanged(int index)
+        {
+            // 切换Mod
+            var selectMod = m_Dropdown.options[m_Dropdown.value].text;
+            ModChangedSuggestLabel.gameObject.SetActive(selectMod != RuntimeEnvSetup.CurrentModId);
+        }
     
     
-    public void OnUploadMod()
-    {
+        public void OnUploadMod()
+        {
         
-    }
+        }
 
-    public void OnOpenURL(string url)
-    {
-        Jyx2.Middleware.Tools.openURL(url);
-    }
+        public void OnOpenURL(string url)
+        {
+            Jyx2.Middleware.Tools.openURL(url);
+        }
 
 
-    public void OnOpenSteamWorkshop()
-    {
+        public void OnOpenSteamWorkshop()
+        {
         
+        }
     }
 }
